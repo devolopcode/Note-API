@@ -1,0 +1,63 @@
+<!--
+ * @Author: Fan Li
+ * @Date: 2022-03-23 08:50:44
+ * @LastEditTime: 2022-03-23 12:53:49
+ * @LastEditors: Fan Li
+ * @Description: null
+ * @FilePath: \Code\Koa2\note\src\test\uploadImage.html
+ * @Help: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <input type="file" name="file" id="file" value="" multiple />
+  <button id="submit">上传</button>
+  <img src="" alt="" style="width: 500px;">
+  <script>
+    window.onload = () => {
+      let eFile = document.getElementById('file')
+      let fileList = []
+      eFile.addEventListener('change', (event) => {
+        console.log('hello world')
+        for (let i = 0; i < eFile.files.length; i++) {
+          console.log('hello world')
+          fileList.push(eFile.files[i])
+        }
+      })
+      document.getElementById('submit').addEventListener('click', function () {
+        if (!eFile.files.length === 0) {
+          alert('请上传文件')
+          return
+        }
+        console.log(eFile)
+
+        let formData = new FormData()
+        fileList.forEach((file) => {
+          formData.append('file', file, file.name)
+        })
+        console.log('hello world')
+        let xhr = new XMLHttpRequest()
+        xhr.open('POST', 'http://127.0.0.1:8080/api/i/upload', true)
+        xhr.send(formData)
+        xhr.onreadystatechange = () => {
+          console.log(xhr)
+          if (xhr.status === 200 && xhr.readyState === 4) {
+            const result = JSON.parse(xhr.response)
+            console.log(result)
+            document.querySelector('img').setAttribute('src', 'http://localhost:3000/' + result.url)
+          }
+        }
+      })
+    }
+  </script>
+</body>
+
+</html>
